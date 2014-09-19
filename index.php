@@ -49,3 +49,16 @@ require_capability('booktool/download:download', $context);
 
 ChromePhp::log("let's go");
 generate_pdf($bookid->id, $course->id);
+/*$chapterids = $DB->get_fieldset_sql('SELECT id FROM {book_chapters} WHERE bookid = ?', array($bookid->id));
+
+foreach ($chapterids as $cid) {
+	
+	$sql = 'SELECT id, subchapter, title, content FROM 
+		{book_chapters} WHERE id = ? AND bookid = ?';
+
+	$params = array('id'=>$cid, 'bookid' => $bookid->id);
+
+	$data = $DB->get_records_sql($sql, $params);
+
+	var_dump($data[$cid]->content);
+}*/

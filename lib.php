@@ -144,14 +144,42 @@ function generate_pdf($bookid, $courseid) {
 
 	    $pdf->SetFont('freeserif', '', 12);
 
-	    $pdf->WriteHTML($data[$id]->content);
-	}
+	    /*$par_pat = '/(<p>)(.*?)(</p>)/i';
 
+	    preg_match_all($par_pat, serialize($data[$id]->content), $paragraphs);
+		
+		foreach ($paragraphs as $paragraph) {
+        	
+        	$pdf->WriteHTML($paragraph, true, 0 , true, 0);
+		}*/
+
+		$len = strlen($data[$id]->content);
+
+		ChromePhp::log($len);
+
+		if ($len > 3000) {
+
+			//$content = explode('<p>', $data[$id]->content);
+
+			$content = preg_split('/<p[^>]+>/i', $data[$id]->content, NULL, PREG_SPLIT_DELIM_CAPTURE);
+
+			foreach ($content as $part) {
+
+				if ($part != '</p>') {
+
+					$pdf->WriteHTML($part, true, 0 , true, 0);
+				}
+			}
+
+		} else {
+			$pdf->WriteHTML($data[$id]->content, true, 0 , true, 0);
+		}
+
+	}
 
 	$pdf->addTOCPage(PDF_PAGE_ORIENTATION, PDF_PAGE_FORMAT, true);
 	$pdf->addTOC('2', 'freeserif', ' ', 'Sadržaj', 'B', array(0,0,0));
 	$pdf->endTOCPage();
-
 
 	$pdf->Output($name.'.pdf', 'I');
 
