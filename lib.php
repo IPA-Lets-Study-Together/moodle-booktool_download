@@ -58,10 +58,8 @@ function generate_pdf($bookid, $courseid) {
 	$course_name = $DB->get_field('course', 'fullname', array('id' => $courseid), MUST_EXIST);
 	// set document information
 	$pdf->SetCreator('EFST');
-	//$pdf->SetAuthor('Nicola Asuni');
 	$pdf->SetTitle($name);
 	$pdf->SetSubject($course_name);
-	//$pdf->SetKeywords('TCPDF, PDF, example, test, guide');
 
 	// remove header
 	$pdf->setPrintHeader(false);
@@ -83,11 +81,6 @@ function generate_pdf($bookid, $courseid) {
 	// set image scale factor
 	$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
 
-	// set some language-dependent strings (optional)
-	/*if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
-	    require_once(dirname(__FILE__).'/lang/eng.php');
-	    $pdf->setLanguageArray($l);
-	}*/
 
 	// ---------------------------------------------------------
 
@@ -104,21 +97,17 @@ function generate_pdf($bookid, $courseid) {
 
 	foreach ($chapterids as $id) {
 
-	    ChromePhp::log($id);
-
 	    $pdf->AddPage();
 
 	    $sql = 'SELECT id, subchapter, title, content FROM
 	            {book_chapters} WHERE id = ? AND bookid = ?';
 	    $params = array('id'=>$id, 'bookid' => $bookid);
 
-	    ChromePhp::log('get records');
 	    $data = $DB->get_records_sql($sql, $params);
 
 	    if($data[$id]->subchapter == '1') {
 
 	        $subchapter_title = $chapter.".".$subchapter." ".$data[$id]->title;
-	        ChromePhp::log($subchapter_title);
 
 	        $pdf->SetFont('freeserif', 'B', 14);
 
@@ -132,8 +121,6 @@ function generate_pdf($bookid, $courseid) {
 	        $pdf->SetFont('freeserif', 'B', 16);
 
 	        $chapter_title = $chapter." ".$data[$id]->title;
-
-	        ChromePhp::log($chapter_title);
 
 	        $pdf->Bookmark($chapter_title, 0, 0, '', 'B', array(0,0,0));
 	        $pdf->Cell(0, 6, $chapter_title, 0, 1, 'L');
@@ -154,8 +141,6 @@ function generate_pdf($bookid, $courseid) {
 		}*/
 
 		$len = strlen($data[$id]->content);
-
-		ChromePhp::log($len);
 
 		if ($len > 3000) {
 

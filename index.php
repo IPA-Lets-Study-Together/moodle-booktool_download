@@ -24,8 +24,6 @@
 
 require(dirname(__FILE__).'/../../../../config.php');
 
-//require_once(dirname(__FILE__).'/../../config.php');
-require_once($CFG->libdir.'/chromephp/ChromePhp.php');//izbrisati kasnije
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->libdir.'/tcpdf/tcpdf.php');
 require_once(dirname(__FILE__).'/lib.php');
@@ -39,26 +37,10 @@ $cm = get_coursemodule_from_id('book', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 $bookid = $DB->get_record('book', array('id'=>$cm->instance), 'id', MUST_EXIST);
 
-ChromePhp::log($bookid->id);
-
 require_course_login($course, true, $cm);
 
 $context = context_module::instance($cm->id);
 
 require_capability('booktool/download:download', $context);
 
-ChromePhp::log("let's go");
 generate_pdf($bookid->id, $course->id);
-/*$chapterids = $DB->get_fieldset_sql('SELECT id FROM {book_chapters} WHERE bookid = ?', array($bookid->id));
-
-foreach ($chapterids as $cid) {
-	
-	$sql = 'SELECT id, subchapter, title, content FROM 
-		{book_chapters} WHERE id = ? AND bookid = ?';
-
-	$params = array('id'=>$cid, 'bookid' => $bookid->id);
-
-	$data = $DB->get_records_sql($sql, $params);
-
-	var_dump($data[$cid]->content);
-}*/
