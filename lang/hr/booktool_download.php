@@ -28,3 +28,5 @@ $string['download'] = 'Preuzmi';
 $string['pluginname'] = 'Preuzimanje Book-a';
 
 $string['page'] = 'Stranica';
+
+$string['noalt'] = 'Slika nema opis';
