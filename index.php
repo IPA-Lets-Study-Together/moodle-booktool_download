@@ -36,9 +36,6 @@ $id = required_param('id', PARAM_INT); // Course Module ID
 $cm = get_coursemodule_from_id('book', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', array('id'=>$cm->course), '*', MUST_EXIST);
 $bookid = $DB->get_record('book', array('id'=>$cm->instance), 'id', MUST_EXIST);
-
-require_course_login($course, true, $cm);
-
 $context = context_module::instance($cm->id);
 
 require_course_login($course, true, $cm);

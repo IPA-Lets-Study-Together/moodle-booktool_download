@@ -121,7 +121,6 @@ function generate_pdf($bookid, $courseid) {
 	$pdf->Write(10, $coursename, '', 0, 'C', true, 0, false, false, 0);
 
 	// get id values from all the chapters in the Book
-
 	$sql = 'SELECT id 
 	FROM {book_chapters}
 	WHERE bookid = ?';
@@ -134,7 +133,7 @@ function generate_pdf($bookid, $courseid) {
 	$chaptercnt = 1;
 	$subchaptercnt = 1;
 
-	// add chapter and page for each chapter database
+	// add chapter and page for each chapter in the database
 	foreach ($chapterids as $chapterid) {
 		$pdf->AddPage();
 
@@ -215,29 +214,32 @@ function generate_pdf($bookid, $courseid) {
  */
 function remove_images($content) {
 
-	if (empty($paragraph)) {
+	if (empty($content)) {
 		return;
 	}
-	$dom = new DOMDocument("charset=ISO-8859-1");
+
+	$content = mb_convert_encoding($content, 'HTML-ENTITIES', 'UTF-8');
+	$dom = new DOMDocument();
 	$dom->loadHTML($content);
 
 	foreach( $dom->getElementsByTagName('img') as $imgnode ) {
+
+		$altnode = $dom->createElement('p');
 		
 		$alt = $imgnode->getAttribute('alt');
 
 		if (!empty($alt)) {
-			$altnode = $dom->createElement(
-				'p', 
-				$alt
-			);
+			$alttext = $dom->createTextNode($alt);
+			$altnode->appendChild($alttext); 
+
 		} else {
-			$altnode = $dom->createElement(
-				'p', 
-				array(get_string('noalt', 'booktool_download'))
+			$alttext = $dom->createTextNode(
+				get_string('noalt', 'booktool_download')
 			);
+			$altnode->appendChild($alttext);
 		}
 
-    	$dom->replaceChild($imgnode, $altnode);
+    	$imgnode->parentNode->replaceChild($altnode, $imgnode);
 	}
 
 	$output = $dom->saveHTML();
