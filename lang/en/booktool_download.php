@@ -28,3 +28,5 @@ $string['download'] = 'Download this book';
 $string['pluginname'] = 'Book download';
 
 $string['page'] = 'Page';
+
+$string['noalt'] = 'This image has no description.';
