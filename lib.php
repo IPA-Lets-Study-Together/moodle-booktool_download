@@ -228,7 +228,7 @@ function remove_images($content) {
 		
 		$alt = $imgnode->getAttribute('alt');
 
-		if (!empty($alt)) {
+		if (!$alt) {
 			$alttext = $dom->createTextNode($alt);
 			$altnode->appendChild($alttext); 
 
