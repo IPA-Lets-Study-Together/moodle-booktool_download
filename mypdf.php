@@ -34,6 +34,9 @@ class MYPDF extends TCPDF {
         // Set font
         $this->SetFont('freeserif', '', 8); //empty string for second parameter gives us regular font
         // Page number
-        $this->Cell(0, 10, get_string('page', 'booktool_download').' '.$this->getAliasNumPage().' / '.$this->getAliasNbPages(), 0, false, 'C', 0, '', 0, false, 'T', 'M');
+        $this->Cell(0, 
+            10, 
+            get_string('page', 'booktool_download').' '.$this->getAliasNumPage().' / '.$this->getAliasNbPages(), 
+            0, false, 'C', 0, '', 0, false, 'T', 'M');
     }
 }
