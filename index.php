@@ -41,4 +41,4 @@ $context = context_module::instance($cm->id);
 require_course_login($course, true, $cm);
 require_capability('booktool/download:download', $context);
 
-generate_pdf($bookid->id, $course->id);
+generate_pdf($bookid->id, $course->id, $context->id);

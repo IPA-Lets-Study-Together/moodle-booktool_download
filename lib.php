@@ -63,8 +63,10 @@ defined('MOODLE_INTERNAL') || die;
  *
  * @param int id of Book
  * @param int id of Course
+ * @param int id of Context
  */
-function generate_pdf($bookid, $courseid) {
+function generate_pdf($bookid, $courseid, $contextid) {
+	
 	global $DB;
 
 	// create new PDF document
@@ -150,6 +152,15 @@ function generate_pdf($bookid, $courseid) {
 
 		foreach ($data as $item) {
 
+			$item->content = file_rewrite_pluginfile_urls(
+				$item->content, 
+				'pluginfile.php', 
+				$contextid, 
+				'mod_book', 
+				'chapter', 
+				$chapterid
+			);
+
 			if ($item->subchapter == 1) {
 				$subchapter_title = $chaptercnt.".".$subchaptercnt." ".$item->title;
 
@@ -174,7 +185,7 @@ function generate_pdf($bookid, $courseid) {
 			$pdf->SetFont('freeserif', '', 12);
 
 		    //get content with extracted images alt attribute
-			$noimg = remove_images($item->content);
+			//$noimg = remove_images($item->content);
 
 		    // library can't parse too much text at once, breaking output in paragraphs using REGEX
 			$content = preg_split(
