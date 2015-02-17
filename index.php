@@ -29,8 +29,6 @@ require_once($CFG->libdir.'/tcpdf/tcpdf.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/mypdf.php');
 
-global $CFG;
-
 $id = required_param('id', PARAM_INT); // Course Module ID
 
 $cm = get_coursemodule_from_id('book', $id, 0, false, MUST_EXIST);
