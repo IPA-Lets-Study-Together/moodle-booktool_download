@@ -61,11 +61,11 @@ defined('MOODLE_INTERNAL') || die;
 /**
  * Generates PDF file for given Book id
  *
- * @param int id of Book
- * @param int id of Course
- * @param int id of Context
+ * @param int $bookid id property of Book stdClass
+ * @param int $courseid id property of Course stdClass
+ * @param int id $contextid id property of Context stdClass
  */
-function generate_pdf($bookid, $courseid, $contextid) {
+function booktool_download_generate_pdf($bookid, $courseid, $contextid) {
 	
 	global $DB;
 
@@ -89,7 +89,6 @@ function generate_pdf($bookid, $courseid, $contextid) {
 		);
 
 	// set PDF document information
-	$pdf->SetCreator('EFST');
 	$pdf->SetTitle($name);
 	$pdf->SetSubject($coursename);
 
@@ -122,47 +121,37 @@ function generate_pdf($bookid, $courseid, $contextid) {
 	$pdf->SetFont('freeserif', 'B', 16);
 	$pdf->Write(10, $coursename, '', 0, 'C', true, 0, false, false, 0);
 
-	// get id values from all the chapters in the Book
-	$sql = 'SELECT id 
-	FROM {book_chapters}
-	WHERE bookid = ?';
-	$params = array(
-		'bookid' => $bookid
-		);
-	$chapterids = $DB->get_records_sql($sql, $params);
-
 	// this two variables are used as counters
 	$chaptercnt = 1;
 	$subchaptercnt = 1;
 
-	// add chapter and page for each chapter in the database
-	foreach ($chapterids as $chapterid) {
-		$pdf->AddPage();
+	$rs = $DB->get_recordset(
+		'book_chapters',
+		array('bookid' => $bookid),
+		'',
+		'id, subchapter, title, content',
+		0,
+		0
+	);
 
-		$sql = 'SELECT id, subchapter, title, content 
-		FROM {book_chapters} 
-		WHERE id = ? AND bookid = ?';
+	if ($rs->valid()) {
 
-		$params = array(
-			'id' => $chapterid->id, 
-			'bookid' => $bookid
-			);
+		foreach ($rs as $record) {
+			
+			$pdf->AddPage();
 
-		$data = $DB->get_records_sql($sql, $params);
-
-		foreach ($data as $item) {
-
-			$item->content = file_rewrite_pluginfile_urls(
-				$item->content, 
+			$record->content = file_rewrite_pluginfile_urls(
+				$record->content, 
 				'pluginfile.php', 
 				$contextid, 
 				'mod_book', 
 				'chapter', 
-				$chapterid
+				$record->id
 			);
 
-			if ($item->subchapter == 1) {
-				$subchapter_title = $chaptercnt.".".$subchaptercnt." ".$item->title;
+			if ($record->subchapter == 1) {
+
+				$subchapter_title = $chaptercnt.".".$subchaptercnt." ".$record->title;
 
 				$pdf->SetFont('freeserif', 'B', 14);
 
@@ -170,11 +159,12 @@ function generate_pdf($bookid, $courseid, $contextid) {
 				$pdf->Cell(0, 10, $subchapter_title, 0, 1, 'L');
 
 				$subchaptercnt ++;
+
 			} else {
 
 				$pdf->SetFont('freeserif', 'B', 16);
 
-				$chapter_title = $chaptercnt." ".$item->title;
+				$chapter_title = $chaptercnt." ".$record->title;
 				$pdf->Bookmark($chapter_title, 0, 0, '', 'B', array(0,0,0));
 				$pdf->Cell(0, 6, $chapter_title, 0, 1, 'L');
 
@@ -184,13 +174,10 @@ function generate_pdf($bookid, $courseid, $contextid) {
 
 			$pdf->SetFont('freeserif', '', 12);
 
-		    //get content with extracted images alt attribute
-			//$noimg = remove_images($item->content);
-
 		    // library can't parse too much text at once, breaking output in paragraphs using REGEX
 			$content = preg_split(
 				'/<p[^>]+>/i', 
-				$noimg, 
+				$record->content, 
 				NULL, 
 				PREG_SPLIT_DELIM_CAPTURE
 				);
@@ -206,7 +193,6 @@ function generate_pdf($bookid, $courseid, $contextid) {
 	}
 
 	$pdf->addTOCPage(PDF_PAGE_ORIENTATION, PDF_PAGE_FORMAT, true);
-	$pdf->addTOC('2', 'freeserif', ' ', 'Sadržaj', 'B', array(0,0,0));
 	$pdf->addTOC('2', 'freeserif', ' ', get_string('toc', 'booktool_download'), 'B', array(0,0,0));
 	$pdf->endTOCPage();
 
@@ -217,4 +203,3 @@ function generate_pdf($bookid, $courseid, $contextid) {
 	//============================================================+
 	
 }
-
