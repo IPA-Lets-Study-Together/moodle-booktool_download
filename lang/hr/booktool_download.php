@@ -25,8 +25,7 @@
 defined('MOODLE_INTERNAL') || die;
 
 $string['download'] = 'Preuzmi';
-$string['pluginname'] = 'Preuzimanje Book-a';
+$string['pluginname'] = 'Preuzimanje Knjige';
 
 $string['page'] = 'Stranica';
-
-$string['noalt'] = 'Slika nema opis';
+$string['toc'] = 'Sadržaj';

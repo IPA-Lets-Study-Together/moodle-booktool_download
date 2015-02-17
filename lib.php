@@ -207,6 +207,7 @@ function generate_pdf($bookid, $courseid, $contextid) {
 
 	$pdf->addTOCPage(PDF_PAGE_ORIENTATION, PDF_PAGE_FORMAT, true);
 	$pdf->addTOC('2', 'freeserif', ' ', 'Sadržaj', 'B', array(0,0,0));
+	$pdf->addTOC('2', 'freeserif', ' ', get_string('toc', 'booktool_download'), 'B', array(0,0,0));
 	$pdf->endTOCPage();
 
 	$pdf->Output($name.'.pdf', 'I');
